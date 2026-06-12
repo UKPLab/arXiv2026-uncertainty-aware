@@ -1,20 +1,16 @@
-<p  align="center">
-  <img src='logo.png' width='200'>
-</p>
+# Uncertainty-Aware Generation and Decision-Making Under Ambiguity
 
-# arxiv2026_uncertainty_aware
 [![Arxiv](https://img.shields.io/badge/Arxiv-YYMM.NNNNN-red?style=flat-square&logo=arxiv&logoColor=white)](https://put-here-your-paper.com)
 [![License](https://img.shields.io/github/license/UKPLab/arXiv2026-uncertainty-aware)](https://opensource.org/licenses/Apache-2.0)
-[![Python Versions](https://img.shields.io/badge/Python-3.9-blue.svg?style=flat&logo=python&logoColor=white)](https://www.python.org/)
-[![CI](https://github.com/UKPLab/arXiv2026-uncertainty-aware/actions/workflows/main.yml/badge.svg)](https://github.com/UKPLab/arXiv2026-uncertainty-aware/actions/workflows/main.yml)
+[![Python Versions](https://img.shields.io/badge/Python-3.10-blue.svg?style=flat&logo=python&logoColor=white)](https://www.python.org/)
 
-This is the official template for new Python projects at UKP Lab. It was adapted for the needs of UKP Lab from the excellent [python-project-template](https://github.com/rochacbruno/python-project-template/) by [rochacbruno](https://github.com/rochacbruno).
+This repository contains sourcecode to reproduce and run experiments from the above paper that is currently a preprint.
 
-It should help you start your project and give you continuous status updates on the development through [GitHub Actions](https://docs.github.com/en/actions).
+> **Abstract:** With rapidly improving capabilities, Large Language Models (LLMs) are increasingly used in many complex real-world tasks. Beyond requiring in-depth knowledge and reasoning skills, many of these tasks exhibit a high degree of subjectivity and require that the outputs of the model can be trusted. While a lot of progress has been made to train better models, decision-making algorithms have received less attention. In this work, we present and evaluate various uncertainty-aware decision-making algorithms based on Bayesian decision theory and risk-averse decision making on the tasks of tutoring and automatic peer reviewing. Concretely, we take uncertainty over tutoring strategies and review scores into account when generating a tutor response or review and use conformal prediction to provide guarantees over strategy and score. We find empirically that these algorithms can improve the utility of the generations but need to be carefully implemented when ambiguity is high. For example, risk-averse rules can degrade performance by optimizing for generic outputs, while Bayesian methods tend to perform better. Our work uses techniques from decision theory to improve LLM-based decision-making and outlines open challenges for the community.
 
-> **Abstract:** The study of natural language processing (NLP) has gained increasing importance in recent years, with applications ranging from machine translation to sentiment analysis. Properly managing Python projects in this domain is of paramount importance to ensure reproducibility and facilitate collaboration. The template provides a structured starting point for projects and offers continuous status updates on development through GitHub Actions. Key features include a basic setup.py file for installation, packaging, and distribution, documentation structure using mkdocs, testing structure using pytest, code linting with pylint, and entry points for executing the program with basic CLI argument parsing. Additionally, the template incorporates continuous integration using GitHub Actions with jobs to check, lint, and test the project, ensuring robustness and reliability throughout the development process.
+> **Disclaimer:** We do not promote automation of the peer-review process but aim to support human reviewers and authors.
 
-Contact person: [Federico Tiblias](mailto:federico.tiblias@tu-darmstadt.de) 
+Contact person: [Nico Daheim](mailto:nico.daheim@tu-darmstadt.de) 
 
 [UKP Lab](https://www.ukp.tu-darmstadt.de/) | [TU Darmstadt](https://www.tu-darmstadt.de/
 )
@@ -23,94 +19,71 @@ Don't hesitate to send us an e-mail or report an issue, if something is broken (
 
 
 ## Getting Started
-
-> **DO NOT CLONE OR FORK**
-
-If you want to set up this template:
-
-1. Request a repository on UKP Lab's GitHub by following the standard procedure on the wiki. It will install the template directly. Alternatively, set it up in your personal GitHub account by clicking **[Use this template](https://github.com/rochacbruno/python-project-template/generate)**.
-2. Wait until the first run of CI finishes. Github Actions will commit to your new repo with a "✅ Ready to clone and code" message.
-3. Delete optional files: 
-    - If you don't need automatic documentation generation, you can delete folder `docs`, file `.github\workflows\docs.yml` and `mkdocs.yml`
-    - If you don't want automatic testing, you can delete folder `tests` and file `.github\workflows\tests.yml`
-    - If you do not wish to have a project page, delete folder `static` and files `.nojekyll`, `index.html`
-4. Prepare a virtual environment:
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install .
-pip install -r requirements-dev.txt # Only needed for development
+Running
 ```
-5. Adapt anything else (for example this file) to your project. 
+pip install -r requirements.txt
+```
+will install all necessary packages.
 
-6. Read the file [ABOUT_THIS_TEMPLATE.md](ABOUT_THIS_TEMPLATE.md)  for more information about development.
+All code is located in `arxiv2026_uncertainty_aware` and we `cd` into it next :).
+
+The experiments of the paper were organized using the workflow manager [Sisyphus](https://github.com/rwth-i6/sisyphus). If you would like to make use of it, too, then please run:
+```
+git clone git@github.com:rwth-i6/sisyphus.git
+cd sisyphus/
+pip install -r requirements.txt
+cd ..
+mkdir alias
+mkdir output
+mkdir work
+```
+Sisyphus will use the directories as follows:
+  1. `alias`: It's possible to identify aliases for each job to identify it quickly (as a default, a hash is appended to the jobclass name as an identifier), and sisyphus adds a symlink to the job under the alias.
+  2. `output`: `tk.register_output("name", job_class.file)` registers an output under the filename `name` in the output folder that symlinks to `job_class.file`
+  3. `work`: All jobs will be placed here under their hash.
 
 ## Usage
 
-### Using the classes
+### Running experiments using Sisyphus
 
-To import classes/methods of `arxiv2026_uncertainty_aware` from inside the package itself you can use relative imports: 
-
-```py
-from .base import BaseClass # Notice how I omit the package name
-
-BaseClass().something()
+Examples for training with Sisyphus are found in the `config/` folder.
+Running experiments for Mathdial (https://aclanthology.org/2023.findings-emnlp.372/) can be done via running the following:
+```
+cd arxiv2026_uncertainty_aware
+sisyphus/sis --config config config/mathdial.py
 ```
 
-To import classes/methods from outside the package (e.g. when you want to use the package in some other project) you can instead refer to the package name:
+In the same folder there is also code to run experiments on NLPEER (https://aclanthology.org/2023.acl-long.277/).
 
-```py
-from arxiv2026_uncertainty_aware import BaseClass # Notice how I omit the file name
-from arxiv2026_uncertainty_aware.subpackage import SubPackageClass # Here it's necessary because it's a subpackage
+The config file also defines all the prompts that we use for the various generation, LLM-judge, and utility models.
 
-BaseClass().something()
-SubPackageClass().something()
-```
+The main code is found under `code`, where under `code/arxiv/methods/` there are various implementations of methods for sampling outputs, scoring them, evaluation, and conformal prediction.
 
-### Using scripts
+Prediction is done using `code/arxiv/trainer/custom_trainer.py`, where vllm is called directly.
 
-This is how you can use `arxiv2026_uncertainty_aware` from command line:
 
-```bash
-$ python -m arxiv2026_uncertainty_aware
-```
+### Code Structure
 
-### Expected results
+The code is mainly based on the concept of ''methods'' that are found in the `/code/arxiv/methods/` folder which wrap all of the functionality needed to reproduce a certain method:
+  1. Defining and loading Trainer and Data Collator classes
+  2. Loading all datasets
+  3. Defining and applying the preprocessing methods, defined in `/code/arxiv/methods/preprocessing`
 
-After running the experiments, you should expect the following results:
+To understand how the method classes are structured it's best to check `code/arxiv/methods/base.py` which defines a base class from which all methods inherit.
 
-(Feel free to describe your expected results here...)
-
-### Parameter description
-
-* `x, --xxxx`: This parameter does something nice
-
-* ...
-
-* `z, --zzzz`: This parameter does something even nicer
-
-## Development
-
-Read the FAQs in [ABOUT_THIS_TEMPLATE.md](ABOUT_THIS_TEMPLATE.md) to learn more about how this template works and where you should put your classes & methods. Make sure you've correctly installed `requirements-dev.txt` dependencies
+The main entry point for the code is `/code/arxiv/main_simple.py` that handles loading method classes, models, and running the Trainers.
 
 ## Cite
 
 Please use the following citation:
 
 ```
-@InProceedings{smith:20xx:CONFERENCE_TITLE,
-  author    = {Smith, John},
-  title     = {My Paper Title},
-  booktitle = {Proceedings of the 20XX Conference on XXXX},
-  month     = mmm,
-  year      = {20xx},
-  address   = {Gotham City, USA},
-  publisher = {Association for XXX},
-  pages     = {XXXX--XXXX},
-  url       = {http://xxxx.xxx}
+@misc{
 }
 ```
 
 ## Disclaimer
 
 > This repository contains experimental software and is published for the sole purpose of giving additional background details on the respective publication. 
+
+> The repo template is adapted from [python-project-template](https://github.com/rochacbruno/python-project-template/) by [rochacbruno](https://github.com/rochacbruno).
