@@ -72,8 +72,6 @@ class SimpleTrainer(object):
         self.g.manual_seed(0)
 
         self.train_fn = self.optimizer_args.train_fn
-        
-        # login(token=self.model_args.use_auth_token)
 
         if predict:
             self.vllm_engine = LLM(
@@ -110,7 +108,7 @@ class SimpleTrainer(object):
         torch.manual_seed(worker_seed)
 
     def wandb_init(self, args, optimizer_args, model_args, data_args):
-        exp_name = str(data_args.dataset_name.split("/")[-1].replace(".py", "")) + "-" + optimizer_args.optimizer_name.replace("_SVRG", "")
+        exp_name = str(data_args.dataset_name.split("/")[-1].replace(".py", "")) + "-" + optimizer_args.optimizer_name
         wandb.init(
             project=model_args.wandb_project,
             name=exp_name,
@@ -200,10 +198,6 @@ class SimpleTrainer(object):
                 for output in sample.outputs:
                     formatted_output = self._postprocess_vllm_generate(output, input_text)
                     formatted_outputs.append(formatted_output)
-                    # for dict_, token in zip(sample.prompt_logprobs, sample.prompt_token_ids):
-                    #     if dict_ is not None:
-                    #         formatted_output["prompt_logprobs"].append(dict_[token].logprob)
-            # print("\n"*2)
         return formatted_outputs
 
 
